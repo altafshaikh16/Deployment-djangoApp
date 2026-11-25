@@ -1,0 +1,24 @@
+
+# Git repository
+.git/
+
+# Environment secrets
+.env
+
+# MySQL database files
+data/
+
+# Local database
+db.sqlite3
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+venv/
+.venv/
+
+# OS files
+.DS_Store
