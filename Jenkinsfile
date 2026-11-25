@@ -25,7 +25,7 @@ pipeline {
 
                     echo "Copying application files..."
 
-                    rsync -av --no-group \
+                    rsync -rv \
                       --exclude='.git/' \
                       --exclude='.env' \
                       --exclude='data/' \
@@ -48,7 +48,7 @@ pipeline {
                 sh '''
                     set -e
 
-                    echo "Deploying Django application..."
+                    echo "Deploying application..."
 
                     docker compose \
                       -f "$APP_DIR/docker-compose.yml" \
@@ -65,7 +65,7 @@ pipeline {
                     echo "Waiting for application..."
                     sleep 15
 
-                    echo "Checking application response..."
+                    echo "Checking application..."
 
                     curl -f http://localhost:80
                 '''
