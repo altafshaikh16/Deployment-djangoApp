@@ -11,6 +11,7 @@ pipeline {
     }
 
     stages {
+
         stage('Code Checkout') {
             steps {
                 checkout scm
@@ -22,7 +23,9 @@ pipeline {
                 sh '''
                     set -e
 
-                    rsync -av \
+                    echo "Copying application files..."
+
+                    rsync -av --no-group \
                       --exclude='.git/' \
                       --exclude='.env' \
                       --exclude='data/' \
@@ -31,7 +34,11 @@ pipeline {
                       --exclude='*.pyc' \
                       "$WORKSPACE/" "$APP_DIR/"
 
-                    docker compose -f "$APP_DIR/docker-compose.yml" build
+                    echo "Building Docker images..."
+
+                    docker compose \
+                      -f "$APP_DIR/docker-compose.yml" \
+                      build
                 '''
             }
         }
@@ -39,6 +46,10 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh '''
+                    set -e
+
+                    echo "Deploying Django application..."
+
                     docker compose \
                       -f "$APP_DIR/docker-compose.yml" \
                       up -d
@@ -49,7 +60,13 @@ pipeline {
         stage('Verify') {
             steps {
                 sh '''
+                    set -e
+
+                    echo "Waiting for application..."
                     sleep 15
+
+                    echo "Checking application response..."
+
                     curl -f http://localhost:80
                 '''
             }
